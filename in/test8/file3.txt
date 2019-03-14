@@ -1,0 +1,3 @@
+In computing, associative containers refer to a group of class templates in the standard library of the C++ programming language that implement ordered associative arrays.[1] Being templates, they can be used to store arbitrary elements, such as integers or custom classes. The following containers are defined in the current revision of the C++ standard: set, map, multiset, multimap. Each of these containers differ only on constraints placed on their elements.
+
+The associative containers are similar to the unordered associative containers in C++ standard library, the only difference is that the unordered associative containers, as their name implies, do not order their elements.

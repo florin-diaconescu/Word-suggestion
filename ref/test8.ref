@@ -1,0 +1,24 @@
+compact : 1 
+complete : 1 
+compressed : 1 
+compute : 2 
+computer : 1 2 
+
+hash : 2 
+
+trie : 1 
+tries : 1 
+
+containers : 3 
+
+map : 2 3 
+
+data : 1 2 
+database : 2 
+
+the : 1 2 3 
+their : 3 
+them : 1 
+these : 3 
+they : 1 2 3 
+

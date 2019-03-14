@@ -1,0 +1,2 @@
+Machine-learning algorithms are used in a wide variety of applications, such as email-filtering, detection of network-intruders, 
+and computer-vision, where it is infeasible to develop an algorithm of specific instructions for performing the task.
