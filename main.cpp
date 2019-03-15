@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <set>
 #include <vector>
 #include <algorithm>
 #include <string>
@@ -8,22 +9,14 @@ using namespace std;
 
 struct Word{
 	string name;
-	vector<int> fileNo; //numarul fisierului/fisierelor din care provine cuvantul 
+	mutable vector<int> fileNo; //numarul fisierului/fisierelor din care provine cuvantul 
 
 	Word(string _name, vector<int> _fileNo) : name(_name), fileNo(_fileNo) {}
-};
 
-//cauta un cuvant ce trebuie inserat in lista de cuvinte deja existenta
-int findWord(vector<Word> words, string word){
-	int i;
-	for (i = 0; i < words.size(); i++){
-		if (words[i].name == word){
-			return i;
-		}
+	bool operator <(const Word &wordObj) const{
+		return name < wordObj.name;
 	}
-
-	return -1;
-}
+};
 
 bool IsUnwantedCharacter(char c){
 	if (isalpha(c) || (c == '-')){
@@ -34,18 +27,19 @@ bool IsUnwantedCharacter(char c){
 	}
 }
 
-bool cmp_by_name(struct Word a, struct Word b){
-	return (a.name < b.name);
-}
-
 int main(int argc, char* argv[]){
-	int i, index;
+	int i;
 	ifstream inputFile;
-	string word, ignore ="'s"; //pentru stocarea cuvintelor citite
-	vector<Word> words;
+	string word, ignore ="'"; //pentru stocarea cuvintelor citite
+	set<Word> words;
+	set<Word>::iterator it;
+	pair<set<Word>::iterator, bool> ret;
 
 	//citirea articolelor din parametrii din linia de comanda
 	for (i = 1; i < argc; i++){
+		vector<int> aux;
+		aux.push_back(i);
+
 		inputFile.open(argv[i], ios::in);
 		if (!inputFile.is_open()){
 			perror("Error opening file!");
@@ -63,71 +57,63 @@ int main(int argc, char* argv[]){
 			word.erase(remove_if(word.begin(), word.end(), &IsUnwantedCharacter), word.end());
 			transform(word.begin(), word.end(), word.begin(), ::tolower);
 
-			index = findWord(words, word);
-			if(index != -1){
-				if (words[index].fileNo.back() != i){
-					words[index].fileNo.push_back(i);	
-				}				
-			}
-			else{
-				vector<int> aux;
-				aux.push_back(i);
-				words.push_back(Word(word, aux));
+			//cuvantul exista deja
+			ret = words.insert(Word(word, aux));
+			if (!ret.second){
+				if (((Word)*(ret.first)).fileNo.back() != i){
+					vector<int> helper;
+
+					for (long unsigned int j = 0; j < ((Word)*(ret.first)).fileNo.size(); j++){
+						helper.push_back(((Word)*(ret.first)).fileNo[j]);
+					}
+					helper.push_back(i);
+					words.erase(ret.first);
+					words.insert(Word(word, helper));
+				}
+				
 			}
 		}
 
 		inputFile.close();
 	}
 
-	//sortez vectorul de cuvinte lexicografic
-	sort(words.begin(), words.end(), cmp_by_name);
-
-	/*for (i = 0; i < words.size(); i++){
-		cout << words[i].name << " ";
-	}
-	
-	cout<< "\n\n\n";*/
-
 	//citesc datele de la input
 	while (cin >> word){
-		int i, j, count = 0;
+		int count = 0;
 		if (word == "/exit"){
 			return 0;
 		}
 
-		for (i = 0; i < words.size() && count < 5; i++){
-			size_t found = words[i].name.find(word);
+		for (it = words.begin(); it != words.end() && count < 5; ++it){
+			size_t found = ((Word)(*it)).name.find(word);
 
-			//daca s-a gasit stringul
 			if (found != string::npos){
-				//daca s-a gasit incepand cu prima pozitie
 				if (found == 0){
-					cout << words[i].name << " : ";
-					for (j = 0; j < words[i].fileNo.size(); j++){
-						cout << words[i].fileNo[j] << " ";
+					cout << ((Word)(*it)).name << " : ";
+					for (long unsigned int i = 0; i < ((Word)(*it)).fileNo.size(); i++){
+						cout << ((Word)(*it)).fileNo[i] << " ";
 					}
 
 					cout << "\n";
-					count++;
+					count ++;
 				}
 
-				//altfel, incerc sa caut in cuvintele compuse, construind
-				//un cuvant auxiliar
 				else{
 					string wordAux = "-" + word;
-					found = words[i].name.find(wordAux);
+					found = ((Word)(*it)).name.find(wordAux);
 					if (found != string::npos){
-						cout << words[i].name << " : ";
-						for (j = 0; j < words[i].fileNo.size(); j++){
-							cout << words[i].fileNo[j] << " ";
+						cout << ((Word)(*it)).name << " : ";
+						for (long unsigned int i = 0; i < ((Word)(*it)).fileNo.size(); i++){
+							cout << ((Word)(*it)).fileNo[i] << " ";
 						}
 
 						cout << "\n";
-						count++;
+						count ++;
 					}
 				}
 			}
 		}
+
 
 		//daca nu a fost gasit nicaieri
 		if (count == 0){
@@ -135,5 +121,6 @@ int main(int argc, char* argv[]){
 		}
 		cout << "\n";
 	}
+
     return 0;
 }

@@ -1,5 +1,5 @@
 GCC=g++
-CFLAGS=-std=c++11
+CFLAGS=-std=c++11 -Wall
 
 build: kevin
 
