@@ -1,0 +1,47 @@
+//Florin Diaconescu
+
+----------------------------Word suggestions-----------------------------------
+
+Aplicatia presupune parsarea unor fisiere primite ca argumente din linia de
+comanda, pentru ca mai apoi, la introducerea unor cuvinte de la tastatura, sa se
+recomande cuvinte potrivite, precum si fisierul din care acestea au provenit.
+
+Prima varianta a implementarii a presupus un simplu vector de obiecte de tip Word,
+implementare care s-a dovedit extrem de ineficienta, intrucat la fiecare introducere
+in vector verificam daca elementul se afla deja in vector, parcurgere ce ar fi
+durat, in cel mai rau caz, O(n). Pe un text scurt, nu erau probleme, dar la ceva
+mai complex, cum ar fi testele 3 sau 5, era ineficient.
+
+Solutia finala a fost implementarea unui set, in care cautarea este logaritmica, si
+avand o functie de find direct implementata, asa ca am preferat o implementare mai
+optima si care, in primul rand, este capabila sa parseze textele de mare dimensiune
+intr-un timp rezonabil. Un hash map sau un trie ar fi fost, poate, o implementare care
+sa scaleze si mai bine, dar nu ar fi ajutat prea mult in cazul de fata.
+
+In ceea ce priveste logica algoritmului, prima data introduc fiecare cuvant din fiecare
+fisier primit ca argument, sortat pe baza numelui cuvantului, un cuvant fiind definit
+ca o structura formata dintr-un String (numele cuvantului) si un vector de integer
+(fisierele in care acel cuvant se regaseste). Astfel, cand vreau sa introduc un cuvant
+in set-ul de cuvinte, in cazul in care deja era acolo, scot vectorul de fisiere, il
+copiez intr-un vector auxiliar, in care apoi adaug si noul fisier, urmand sa sterg
+elementul, pentru a fi reintrodus, operatie putin cam costisitoare, ce ar putea fi
+optimizata pe viitor, in functie de dimensiunile input-ului.
+
+Intrucat la cautare nu va fi important daca cuvintele au sau nu majuscule, dar si pentru
+ca vreau sa ignor cazurile de genul "Kevin" si "Kevin's", care, fundamental, reprezinta
+acelasi cuvant, initial scap de constructiile de dupa caracterul "'", iar mai apoi fac
+o conversie tolower, urmand apoi sa fac verificarile necesare introducerii in set-ul
+de cuvinte.
+
+Ideea cautarii este aceea ca, parcurgand intregul set de cuvinte, vreau sa verific daca
+constructia "cuvant de cautat" se gaseste in cuvant, urmand ca mai apoi sa vad daca este
+incepand cu primul caracter, caz in care se considera deja gasit. In caz contrar, voi
+verifica daca exista in cuvant constructia "-cuvant", pentru a trata si cazul in care
+apar cuvinte compuse, dar a evita aparatia accidentala a unui cuvant in interiorul altui
+cuvant, fara a fi cuvant compus. O alta idee de implementare ar fi putut presupune un
+vector(set) de cuvinte pentru fiecare cuvant, dar nu consider ca ar fi adus o imbunatatire
+considerabila a timpului de executie al algoritmului.
+
+Intr-un final, algoritmul se va opri fie cand au fost deja sugerate 5 cuvinte (variabila
+count din algoritm), fie cand s-a terminat set-ul de cuvinte, caz in care va fi afisat
+un mesaj corespunzator erorii.

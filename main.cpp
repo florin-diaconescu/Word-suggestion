@@ -1,3 +1,5 @@
+//Florin Diaconescu
+
 #include <iostream>
 #include <fstream>
 #include <set>
@@ -9,7 +11,7 @@ using namespace std;
 
 struct Word{
 	string name; //numele cuvantului
-	vector<int> fileNo; //numarul fisierului/fisierelor din care provine cuvantul 
+	vector<int> fileNo; //numarul fisierului/fisierelor din care provine cuvantul
 
 	Word(string _name, vector<int> _fileNo) : name(_name), fileNo(_fileNo) {}
 
@@ -94,7 +96,7 @@ int main(int argc, char* argv[]){
 					words.erase(ret.first);
 					words.insert(Word(word, helper));
 				}
-				
+
 			}
 		}
 
